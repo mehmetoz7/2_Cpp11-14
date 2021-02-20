@@ -1,46 +1,53 @@
-#include<iostream>
+#include <iostream>
 #include <vector> 
 #include <map>
   
 using namespace std;
-  
-auto meaningOfLife()    
-{
-   return 42; 
-} 
 
 template<typename T, typename U>
 auto add (T t, U u)
 {
+   cout << typeid(t).name() << " " << typeid(u).name() << endl;
    return t+u;
 }
  
 int main(){
-    cout << meaningOfLife() << endl;
+    auto x = 44;
+    auto y = 55.9;
+    auto p = &x;
+    auto pp = &p;
+    auto ppp = &pp;  
+    
+    cout << typeid(x).name() << endl;
+    cout << typeid(y).name() << endl;
+    cout << typeid(p).name() << endl;    
+    cout << typeid(pp).name() << endl;
+    cout << typeid(ppp).name() << endl;
+
+    //----------------------------
     cout << add(3, 4.5) << endl;
-    cout << add(string("ali"), string(" oz")) << endl;    
 
-    vector<double> values;
-    typedef decltype(values.begin()) dvi; //double vector iterator    
-    typedef decltype(42) myint;
-    typedef decltype(add(3, 4.5)) qtype;
-    
-    vector< int > v = { 1, 2, 3, 4, 5, 6 };    
-    //vector< int >::const_iterator iter;     
-    for (auto iter = v.begin(); iter!= v.end(); ++iter )
-       cout << *iter << ' ';            
+    //----------------------------    
+    vector< int > v { 1, 2, 3, 4, 5, 6 };    
+    for ( vector< int >::const_iterator i = v.begin(); i!= v.end(); ++i )
+       cout << *i << ' ';            
     cout << endl;
-   
-    auto no = 45;  // int
-    auto name = "Marco Van Basten"; // std::string
-    auto wage = 12.34;  // double
 
-    cout << no << " " << name << " " << wage << endl;
-
-    auto d = {1,2,3}; //list
-    map<string, vector<double>> ticks;
-    //map<string, vector<double>>::iterator it = ticks.begin();
-    auto it = ticks.begin();    
+    for ( auto i = v.begin(); i != v.end(); ++i )
+       cout << *i << ' ';            
+    cout << endl;
     
+    //----------------------------        
+    map<int, int> m { {0,1}, {2,3}, {4,5} };
+    for (map<int,int>::iterator i=m.begin(); i !=m.end(); ++i)
+       cout << i->first << " => " << i->second << '\n';
+    cout << endl;
+    
+    for (auto i=m.begin(); i !=m.end(); ++i)
+       cout << i->first << " => " << i->second << '\n';
+    cout << endl;    
+    
+    //----------------------------
+   
     return 0;
 }

@@ -1,6 +1,6 @@
-all: my_exec
+all: exec
 
-my_exec: auto.o
+exec: auto.o
 	g++ auto.o -o auto
 
 auto.o: auto.cc
