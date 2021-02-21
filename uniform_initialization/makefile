@@ -1,6 +1,6 @@
 CC := g++
-CPPFLAGS := -std=c++11
-objects := range.o
+CPPFLAGS := -std=c++14
+objects := uniform.o
 libs :=
 
 exec: $(objects)
