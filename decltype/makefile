@@ -1,6 +1,6 @@
 CC := g++
-CPPFLAGS := -std=c++11
-objects := range_based_loop.o
+CPPFLAGS := -std=c++14
+objects := decltype.o
 libs :=
 
 exec: $(objects)

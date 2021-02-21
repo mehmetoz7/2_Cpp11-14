@@ -11,7 +11,7 @@ exec: $(objects)
 	
 .PHONY: clean help
 clean:
-	rm exec $(objects)
+	rm -f exec $(objects)
 
 help:
 	@echo "make"
