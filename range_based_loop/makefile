@@ -1,5 +1,5 @@
 CC := g++
-CPPFLAGS := -std=c++14
+CPPFLAGS := -std=c++11
 objects := range_based_loop.o
 libs :=
 
