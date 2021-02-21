@@ -1,21 +1,55 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <list>
   
 using namespace std;
 
-template <typename T>
-auto add (T a, T b){
-   return a + b;
-}
+template <class T, class U>
+class Calculator{
+    public:
+       Calculator(T x, U y):_x(x), _y(y){}
+       auto mul(){ return _x * _y; }
+       auto sub(){ return _x - _y; }  
+    private:
+       T _x;
+       U _y;
+};
+
+class Human{
+    public:
+       Human(string name, int age) : _name(name), _age(age){}
+       string getName(){return _name;}
+       int getAge(){return _age;}
+    private:
+       string _name;
+       int _age;
+};
 
 int main(){
-    decltype (add(5, 6)) x;
-    cout << typeid(x).name() << endl;
+    int x{5};
+    int arr[3] {5,7,9};
+    double y{4.6};
+    int *p{&x};
     
-    decltype (add(5.9, 6.8)) y;
-    cout << typeid(y).name() << endl;
+    //-----------------------       
+    vector<int> v {1,2,3,4,5,6};
+    map<int, int> m { {0,1}, {2,3}, {4,5} };
+    list<int> l {5, 7, 8};
     
-    decltype(x) z = 5;
-    cout << typeid(z).name() << endl;
-   
+    //-----------------------    
+    Human h1 {"Bob", 37};       
+    cout << h1.getAge() << " " << h1.getName() << endl;
+    
+    //-----------------------
+    Calculator <int, double> c1{5, 6.6};
+    cout << c1.mul() << " " << c1.sub() << endl;
+
+    Calculator <double, int> c2{5.5, 6};
+    cout << c2.mul() << " " << c2.sub() << endl;
+    
     return 0;
 }
+
+
