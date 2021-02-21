@@ -1,10 +1,13 @@
-all: exec
+CC := g++
+CPPFLAGS := -std=c++14
+objects := auto.o
+libs :=
 
-exec: auto.o
-	g++ auto.o -o auto
+auto: $(objects)
+	$(CC) $^ $(libs) -o $@
 
-auto.o: auto.cc
-	g++ -std=c++14 -c auto.cc
+%.o: %.c
+	$(CC) $(CPPFLAGS) -c $<
 	
 .PHONY: clean help
 clean:
