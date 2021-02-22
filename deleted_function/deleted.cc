@@ -43,8 +43,8 @@ int main(){
     Human h1("Ronald Koemann", 65); 
     Human h2;    
         
-    h2 = h1;       //copy assignment  causes compile error
-    Human h3 = h2; //copy constructor causes compile error
+    //h2 = h1;       //copy assignment  causes compile error
+    //Human h3 = h2; //copy constructor causes compile error
       
     return 0;
 }
