@@ -12,7 +12,7 @@ auto add (T t, U u)
 }
  
 int main(){
-    auto x = 44;
+    auto x = 44; //shold be initialized at decleration
     auto y = 55.9;
     auto p = &x;
     auto pp = &p;
