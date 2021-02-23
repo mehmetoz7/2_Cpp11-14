@@ -43,6 +43,7 @@ int main(){
     cout << h1.getAge() << " " << h1.getName() << endl;
     
     //-----------------------
+    //not built-in type
     Calculator <int, double> c1{5, 6.6};
     cout << c1.mul() << " " << c1.sub() << endl;
 
