@@ -16,13 +16,17 @@ class Sample{
        void Print(){
           for(auto i:v)
              cout << i << " ";
-          cout << endl;
+          cout << endl; 
        }
     private:
        vector<T>v;
 };
 
 int main(){
+    //when compiler sees elements in braces it creates 
+    //std::initialier_list<T>, all stl containers has already
+    //a parameter constructor that accepts initializer_list
+    //argument
     Sample<int> s1 {1,2,3,4,5};
     s1.Print();
     
