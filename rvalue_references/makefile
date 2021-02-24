@@ -1,5 +1,5 @@
 CC := g++
-CPPFLAGS := -std=c++14
+CPPFLAGS := -std=c++11
 objects := rvalue.o
 libs :=
 
