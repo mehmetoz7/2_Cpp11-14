@@ -1,3 +1,12 @@
+/*
+if there is no user defined constructor in the class, compiler
+creates a constructor implicitily. if there is a constructor
+compiler does not create one. To make compiler generate this effective contructor it is being made default.
+
+a function that is explicitely defaulted must be a special member
+function and has no default argument
+*/
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,7 +17,9 @@ using namespace std;
 
 class Human{
     public:
-       Human()=default;
+       //adding =default to the code makes compiler add 
+       //default constructor implicitily
+       Human()=default; //let make compiler generate it
        Human(string name, int age) : _name(name), _age(age){}
 
        string getName(){return _name;}
