@@ -54,6 +54,7 @@ public:
 };
 
 Test f(Test a){
+   cout << "..." << endl;
    return a;
 }
 
@@ -102,8 +103,9 @@ int main(){
     v.push_back(Test{"aaa"});   //move constructor 
     v.push_back(Test{"bbb"});   //move constructor    
 */
-    t1 = f(Test());             //move assignment     
-    Test t5 = f(Test());        //move constructor
+
+    Test t5 = f(Test{"fff"});        //move constructor
+    t1 = f(Test{"kkk"});             //move assignment     
     return 0;
 }
 
