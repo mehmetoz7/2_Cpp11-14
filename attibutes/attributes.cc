@@ -29,17 +29,14 @@ vector<int> fill(int count){
    }   
 };
 
-[[deprecated("use calcWithRef")]] void div_1(int a, int b){
+[[deprecated("use div_2")]] void div_1(int a, int b){
     cout << a / b;
 } 
   
 bool div_2(auto a, auto b){
     try{
-       if(b==0){
-          throw("divide by zero error");
-       }
-       else{
-           
+       if(b==0){throw("divide by zero error");}
+       else{           
            cout << a/b << endl;
            return true;
        }
