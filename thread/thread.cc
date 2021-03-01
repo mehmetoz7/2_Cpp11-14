@@ -89,9 +89,9 @@ int main(){
    for(int i=0; i<10; i++)
       tList.push_back( thread(f2) );
       
-   for(auto t = tList.begin(); t != tList.end(); t++){
-      if((*t).joinable())
-         (*t).join();
+   for(int i = 0; i < tList.size(); i++){   
+      if(tList.at(i).joinable())
+         tList.at(i).join();
    }
    
    cout << "Exiting 2 from Main Thread" << endl;   
