@@ -4,7 +4,7 @@
 #include <mutex>
 #include <string>
 #include <condition_variable>
-#include <functional>
+#include <functional> //for bind
 
 using namespace std;
 
@@ -77,8 +77,7 @@ class c3{
    mutex m_mutex;
    bool m_bDataLoaded;
 public:
-   c3(){ m_bDataLoaded = false; }
-   
+   c3(){ m_bDataLoaded = false; }   
    void loadData(){
       this_thread::sleep_for(chrono::milliseconds(1000));
       cout << "Loaded Data from XML" << endl;
@@ -103,27 +102,47 @@ public:
 
 class c4{
    mutex m_mutex;
-   condition_variable m_condVar;
+   condition_variable cv1;
    bool m_bDataLoaded;
 public:
    c4(){ m_bDataLoaded = false; }
    void loadData(){
       this_thread::sleep_for(chrono::milliseconds(1000));
       cout<<"Loading Data from XML"<<endl;
+      
       lock_guard<mutex> guard(m_mutex);
       m_bDataLoaded = true;
-      m_condVar.notify_one();
+            
+      cv1.notify_one();
    }
-   bool isDataLoaded(){
-      return m_bDataLoaded;
-   }
+   
+   bool isDataLoaded(){ return m_bDataLoaded; }
+   
    void mainTask(){
-      cout<<"Do Some Handshaking"<<endl;
+      cout << "Do Some Handshaking" << endl;
       unique_lock<mutex> mlock(m_mutex);
-      m_condVar.wait(mlock, bind(&c4::isDataLoaded, this));
-      cout<<"Do Processing On loaded Data"<<endl;
+      cv1.wait(mlock, bind(&c4::isDataLoaded, this));
+      cout << "Do Processing On loaded Data" << endl;
    }
 };
+
+
+mutex mtx2;
+condition_variable cv2;
+bool ready = false;
+bool isReady(){ return ready; }
+
+void print_id (int id) {
+   unique_lock<mutex> lck(mtx2);
+   cv2.wait(lck, bind(isReady));
+   cout << "thread " << id << '\n';
+}
+
+void go() {
+   unique_lock<mutex> lck(mtx2);
+   ready = true;
+   cv2.notify_all();
+}
 
 //--------------------------------------------------------
 
@@ -160,9 +179,9 @@ int main(){
    for(int i=0; i<10; i++)
       tList.push_back( thread(f2) );
       
-   for(int i = 0; i < tList.size(); i++){   
-      if(tList.at(i).joinable())
-         tList.at(i).join();
+   for(auto& th : tList){
+      if(th.joinable())
+         th.join();
    }
    
    cout << "Exiting 2 from Main Thread" << endl;   
@@ -221,13 +240,25 @@ int main(){
    th13.join();
    cout <<"---------------------" << endl;   
 
-   //condition variable      
+   //condition variable   
    c4 app2;
    std::thread th14(&c4::mainTask, &app2);
    std::thread th15(&c4::loadData, &app2);
    th14.join();
    th15.join();
-   cout <<"---------------------" << endl;         
+   cout <<"---------------------" << endl; 
+   
+   vector<thread> tL;
+   for (int i=0; i<10; ++i)
+      tL.push_back(thread(print_id,i));
+
+   cout << "10 threads getting ready to race...\n";
+   this_thread::sleep_for(chrono::milliseconds(1000));   
+   go();
+
+   for (auto& th : tL) th.join();   
+   cout <<"---------------------" << endl; 
+      
    
    return 0;
 }
