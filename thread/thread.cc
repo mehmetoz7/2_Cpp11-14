@@ -65,12 +65,45 @@ void f5(int n, char c){
 }
 
 void f6(int n, char c){
-   lock_guard<mutex> lockGuard(mutex);   
+   lock_guard<mutex> lockGuard(mtx);
    for(int i=0; i<n; i++)
       cout << c;
    cout << endl;
 }
 
+class c3{
+   mutex m_mutex;
+   bool m_bDataLoaded;
+public:
+   c3(){
+      m_bDataLoaded = false;
+   }
+   
+   void loadData(){
+      this_thread::sleep_for(chrono::milliseconds(1000));
+      cout<<"Loaded Data from XML"<<endl;
+
+      m_mutex.lock();
+      m_bDataLoaded = true;
+      m_mutex.unlock();
+    }    
+    
+    void mainTask(){
+       cout<<"Do Some Handshaking"<<endl;
+       
+       m_mutex.lock();
+       while(m_bDataLoaded != true){
+          m_mutex.unlock();
+          cout << "waiting event" << endl;
+          this_thread::sleep_for(chrono::milliseconds(100));
+          m_mutex.lock();          
+       }
+       m_mutex.unlock();
+
+       this_thread::sleep_for(chrono::milliseconds(500));       
+       cout<<"Do Processing On loaded Data"<<endl;
+   }
+};
 
 //--------------------------------------------------------
 
@@ -147,17 +180,26 @@ int main(){
    
    //syncronization with mutex   
    cout << "mutex synchronization" << endl;           
-   thread th8(f5, 50, '*');
-   thread th9(f5, 50, '-');
+   thread th8(f5, 500, '*');
+   thread th9(f5, 500, '-');
    th8.join();
    th9.join();
    
    //syncronization with lock_guard   
    cout << "lock_guard synchronization" << endl;              
-   thread th10(f6, 50, '*');
-   thread th11(f6, 50, '-');   
+   thread th10(f6, 500, '*');
+   thread th11(f6, 500, '-');   
    th10.join();
    th11.join();   
+   cout <<"---------------------" << endl;   
+   
+   //event handling
+   c3 app;
+   thread th12(&c3::mainTask, &app);
+   thread th13(&c3::loadData, &app);
+   th12.join();
+   th13.join();
+   
    
    
    return 0;
