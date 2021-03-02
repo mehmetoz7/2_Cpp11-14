@@ -3,6 +3,8 @@
 #include <vector>
 #include <mutex>
 #include <string>
+#include <condition_variable>
+#include <functional>
 
 using namespace std;
 
@@ -75,22 +77,17 @@ class c3{
    mutex m_mutex;
    bool m_bDataLoaded;
 public:
-   c3(){
-      m_bDataLoaded = false;
-   }
+   c3(){ m_bDataLoaded = false; }
    
    void loadData(){
       this_thread::sleep_for(chrono::milliseconds(1000));
-      cout<<"Loaded Data from XML"<<endl;
-
+      cout << "Loaded Data from XML" << endl;
       m_mutex.lock();
       m_bDataLoaded = true;
       m_mutex.unlock();
-    }    
-    
+    }        
     void mainTask(){
-       cout<<"Do Some Handshaking"<<endl;
-       
+       cout << "Do Some Handshaking" << endl;       
        m_mutex.lock();
        while(m_bDataLoaded != true){
           m_mutex.unlock();
@@ -99,9 +96,32 @@ public:
           m_mutex.lock();          
        }
        m_mutex.unlock();
-
        this_thread::sleep_for(chrono::milliseconds(500));       
-       cout<<"Do Processing On loaded Data"<<endl;
+       cout << "Do Processing On loaded Data" << endl;
+   }
+};
+
+class c4{
+   mutex m_mutex;
+   condition_variable m_condVar;
+   bool m_bDataLoaded;
+public:
+   c4(){ m_bDataLoaded = false; }
+   void loadData(){
+      this_thread::sleep_for(chrono::milliseconds(1000));
+      cout<<"Loading Data from XML"<<endl;
+      lock_guard<mutex> guard(m_mutex);
+      m_bDataLoaded = true;
+      m_condVar.notify_one();
+   }
+   bool isDataLoaded(){
+      return m_bDataLoaded;
+   }
+   void mainTask(){
+      cout<<"Do Some Handshaking"<<endl;
+      unique_lock<mutex> mlock(m_mutex);
+      m_condVar.wait(mlock, bind(&c4::isDataLoaded, this));
+      cout<<"Do Processing On loaded Data"<<endl;
    }
 };
 
@@ -194,13 +214,20 @@ int main(){
    cout <<"---------------------" << endl;   
    
    //event handling
-   c3 app;
-   thread th12(&c3::mainTask, &app);
-   thread th13(&c3::loadData, &app);
+   c3 app1;
+   thread th12(&c3::mainTask, &app1);
+   thread th13(&c3::loadData, &app1);
    th12.join();
    th13.join();
-   
-   
+   cout <<"---------------------" << endl;   
+
+   //condition variable      
+   c4 app2;
+   std::thread th14(&c4::mainTask, &app2);
+   std::thread th15(&c4::loadData, &app2);
+   th14.join();
+   th15.join();
+   cout <<"---------------------" << endl;         
    
    return 0;
 }
