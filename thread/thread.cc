@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <mutex>
 #include <string>
 
 using namespace std;
@@ -53,6 +54,23 @@ public:
       cout << endl << "c2_MemberFunction " << *x << endl;
    }
 };
+
+mutex mtx;
+void f5(int n, char c){
+   mtx.lock();
+   for(int i=0; i<n; i++)
+      cout << c;
+   cout << endl;
+   mtx.unlock();
+}
+
+void f6(int n, char c){
+   lock_guard<mutex> lockGuard(mutex);   
+   for(int i=0; i<n; i++)
+      cout << c;
+   cout << endl;
+}
+
 
 //--------------------------------------------------------
 
@@ -126,8 +144,22 @@ int main(){
    cout << "In Main Thread x : " << x3 << endl;
    cout << "Exiting 5 from Main Thread" << endl;      
    cout <<"---------------------" << endl;   
-      
-      
+   
+   //syncronization with mutex   
+   cout << "mutex synchronization" << endl;           
+   thread th8(f5, 50, '*');
+   thread th9(f5, 50, '-');
+   th8.join();
+   th9.join();
+   
+   //syncronization with lock_guard   
+   cout << "lock_guard synchronization" << endl;              
+   thread th10(f6, 50, '*');
+   thread th11(f6, 50, '-');   
+   th10.join();
+   th11.join();   
+   
+   
    return 0;
 }
 
