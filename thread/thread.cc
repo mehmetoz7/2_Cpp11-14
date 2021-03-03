@@ -264,7 +264,7 @@ int main(){
    for (auto& th : tL) th.join();   
    cout <<"---------------------" << endl;
       
-   //promise, future
+   //get return value from a thread using promise and future
    promise<int> promiseObj;
    future<int> futureObj = promiseObj.get_future();
    thread th(initiazer, &promiseObj);
