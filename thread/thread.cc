@@ -4,7 +4,8 @@
 #include <mutex>
 #include <string>
 #include <condition_variable>
-#include <functional> //for bind
+#include <functional> 
+#include <future>
 
 using namespace std;
 
@@ -106,13 +107,12 @@ class c4{
    bool m_bDataLoaded;
 public:
    c4(){ m_bDataLoaded = false; }
+   
    void loadData(){
       this_thread::sleep_for(chrono::milliseconds(1000));
       cout<<"Loading Data from XML"<<endl;
-      
       lock_guard<mutex> guard(m_mutex);
-      m_bDataLoaded = true;
-            
+      m_bDataLoaded = true;            
       cv1.notify_one();
    }
    
@@ -125,7 +125,6 @@ public:
       cout << "Do Processing On loaded Data" << endl;
    }
 };
-
 
 mutex mtx2;
 condition_variable cv2;
@@ -142,6 +141,11 @@ void go() {
    unique_lock<mutex> lck(mtx2);
    ready = true;
    cv2.notify_all();
+}
+
+void initiazer(promise<int> * promObj){
+    cout << "Inside Thread" << endl;     
+    promObj->set_value(35);
 }
 
 //--------------------------------------------------------
@@ -240,7 +244,7 @@ int main(){
    th13.join();
    cout <<"---------------------" << endl;   
 
-   //condition variable   
+   //condition variable with notify_one 
    c4 app2;
    std::thread th14(&c4::mainTask, &app2);
    std::thread th15(&c4::loadData, &app2);
@@ -248,6 +252,7 @@ int main(){
    th15.join();
    cout <<"---------------------" << endl; 
    
+   //condition variable with notify_all
    vector<thread> tL;
    for (int i=0; i<10; ++i)
       tL.push_back(thread(print_id,i));
@@ -257,8 +262,15 @@ int main(){
    go();
 
    for (auto& th : tL) th.join();   
-   cout <<"---------------------" << endl; 
+   cout <<"---------------------" << endl;
       
+   //promise, future
+   promise<int> promiseObj;
+   future<int> futureObj = promiseObj.get_future();
+   thread th(initiazer, &promiseObj);
+   cout << futureObj.get() << endl;
+   th.join();
+   cout <<"---------------------" << endl;   
    
    return 0;
 }
